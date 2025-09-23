@@ -10,7 +10,7 @@ const dbConfig = {
     user: process.env.DB_USER || 'allable_user',
     host: process.env.DB_HOST || 'localhost',
     database: process.env.DB_NAME || 'allable_db',
-    password: process.env.DB_PASSWORD || 'Maha_251',
+    password: process.env.DB_PASSWORD || 'Bhoomika@07',
     port: process.env.DB_PORT || 5432,
 };
 
