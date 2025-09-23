@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALLABLE – One App. All Abilities.</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --font-size: 16px;
+            --text-color: #1a3a3a;
+            --primary-color: #0c4b4b;
+            --accent-color: #c0a062;
+        }
+        html.high-contrast {
+            --text-color: #000000;
+            --primary-color: #000000;
+        }
+        html.high-contrast .card-bg {
+             background-color: rgba(255, 255, 255, 1);
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            font-size: var(--font-size);
+            color: var(--text-color);
+            -webkit-tap-highlight-color: transparent;
+            background: linear-gradient(-45deg, #e0f2f1, #f1f8e9, #ffcdd2, #e0f2f1);
+            background-size: 400% 400%;
+            animation: gradientBG 20s ease infinite;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; }
+        }
+        .splash-screen {
+            animation: fadeOut 3s forwards;
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            85% { opacity: 1; }
+            100% { opacity: 0; visibility: hidden; }
+        }
+        #app-container {
+            transition: opacity 0.5s ease-in;
+        }
+        .card-bg {
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            transition: all 0.3s ease;
+        }
+        .profile-btn:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+        .modal {
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #083333;
+        }
+        .btn-accent {
+            background-color: var(--accent-color);
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+        .btn-accent:hover {
+            background-color: #a1854e;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Splash Screen -->
+    <div id="splash-screen" class="splash-screen fixed inset-0 z-50 flex flex-col items-center justify-center bg-white">
+        <h1 class="text-5xl font-bold" style="color: var(--primary-color);">ALLABLE</h1>
+        <p class="text-xl mt-3 text-gray-600">One App. All Abilities.</p>
+    </div>
+
+    <!-- Main Application -->
+    <div id="app-container" class="min-h-screen opacity-0">
+        <!-- Home Page -->
+        <section id="home-page" class="flex flex-col items-center justify-center min-h-screen p-4">
+             <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold">Welcome to ALLABLE</h2>
+                <p class="text-gray-600 mt-2 text-lg">Please select a profile to continue.</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 w-full max-w-3xl">
+                <button onclick="selectProfile('visually-impaired')" class="profile-btn card-bg p-8 rounded-2xl shadow-lg flex flex-col items-center text-center">
+                    <span class="text-6xl mb-4" role="img" aria-label="Eye Icon">👁️</span>
+                    <span class="text-2xl font-semibold">Visually Impaired</span>
+                </button>
+                <button onclick="selectProfile('deaf-non-speech')" class="profile-btn card-bg p-8 rounded-2xl shadow-lg flex flex-col items-center text-center">
+                    <span class="text-6xl mb-4" role="img" aria-label="Hand Icon">🖐️</span>
+                    <span class="text-2xl font-semibold">Deaf & Non-Speech</span>
+                </button>
+                <button onclick="selectProfile('elderly')" class="profile-btn card-bg p-8 rounded-2xl shadow-lg flex flex-col items-center text-center">
+                    <span class="text-6xl mb-4" role="img" aria-label="Elderly Person Icon">👴</span>
+                    <span class="text-2xl font-semibold">Elderly</span>
+                </button>
+                <button onclick="selectProfile('illiterate')" class="profile-btn card-bg p-8 rounded-2xl shadow-lg flex flex-col items-center text-center">
+                    <span class="text-6xl mb-4" role="img" aria-label="Document Icon">📝</span>
+                    <span class="text-2xl font-semibold">Illiterate</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Profile Setup Page -->
+        <section id="profile-setup-page" class="hidden flex-col items-center justify-center min-h-screen p-4">
+            <h2 class="text-3xl font-bold mb-8">Profile Setup</h2>
+            <div class="w-full max-w-md card-bg p-8 rounded-2xl">
+                <div class="mb-6">
+                    <label for="language-select" class="block text-lg font-medium mb-2">Language Preference</label>
+                    <select id="language-select" class="w-full p-3 bg-gray-100 rounded-lg border-2 border-transparent focus:border-teal-500 focus:ring-0">
+                        <option value="en-US">English</option>
+                        <option value="kn-IN">Kannada</option>
+                        <option value="hi-IN">Hindi</option>
+                        <option value="ta-IN">Tamil</option>
+                        <option value="te-IN">Telugu</option>
+                    </select>
+                </div>
+                <button onclick="saveSettings()" class="w-full btn-primary font-bold py-3 px-4 rounded-lg">Save Settings</button>
+            </div>
+        </section>
+
+        <!-- Dashboard Page -->
+        <section id="dashboard-page" class="hidden flex-col min-h-screen p-4">
+             <header class="flex justify-between items-center p-4">
+                <div>
+                    <h2 id="dashboard-title" class="text-3xl font-bold">Dashboard</h2>
+                    <p class="text-gray-600">Your personalized space</p>
+                </div>
+                <div>
+                    <button onclick="openSettingsModal()" class="text-md font-semibold text-teal-800 hover:underline mr-4">Settings</button>
+                    <button onclick="showHomePage()" class="text-md font-semibold text-teal-800 hover:underline">Change Profile</button>
+                </div>
+            </header>
+            
+            <div id="predictive-shortcut-container" class="p-4 hidden">
+                 <h3 class="font-bold text-lg mb-2">Suggested for you</h3>
+                 <button id="predictive-shortcut-btn" class="w-full bg-teal-100 text-teal-800 p-4 rounded-xl shadow hover:bg-teal-200 transition text-left text-lg"></button>
+            </div>
+
+            <div id="dashboard-content" class="flex-grow grid grid-cols-2 gap-6 p-4"></div>
+            
+            <footer class="p-4">
+                 <button onclick="activateSOS()" class="w-full bg-red-600 text-white font-bold py-5 px-4 rounded-2xl transition duration-300 flex items-center justify-center text-xl shadow-lg hover:bg-red-700">
+                    <span class="mr-3 text-2xl" role="img" aria-label="SOS Icon">🚨</span> SOS Emergency
+                </button>
+            </footer>
+        </section>
+
+        <!-- Feature View Page -->
+        <section id="feature-view-page" class="hidden flex-col min-h-screen">
+            <header class="flex items-center p-6 bg-white/30 backdrop-blur-md">
+                <button onclick="loadDashboard(appState.profile)" class="mr-4 text-4xl font-bold text-teal-800 hover:text-teal-600 transition-colors">←</button>
+                <h2 id="feature-title" class="text-3xl font-bold">Feature</h2>
+            </header>
+            <div id="feature-content" class="flex-grow p-6 overflow-y-auto">
+                <!-- Feature-specific UI will be injected here -->
+            </div>
+        </section>
+    </div>
+
+    <!-- Accessibility Settings Modal -->
+    <div id="settings-modal" class="hidden fixed inset-0 z-40 bg-black bg-opacity-60 flex items-center justify-center p-4 modal">
+        <div class="card-bg w-full max-w-md p-8 rounded-2xl shadow-2xl">
+            <h2 class="text-2xl font-bold mb-6">Accessibility Settings</h2>
+            <div class="space-y-4">
+                <div>
+                    <label for="voice-speed" class="block font-medium mb-1">Voice Speed</label>
+                    <input type="range" id="voice-speed" min="0.5" max="2" step="0.1" class="w-full">
+                </div>
+                <div>
+                    <label for="voice-pitch" class="block font-medium mb-1">Voice Pitch</label>
+                    <input type="range" id="voice-pitch" min="0.5" max="2" step="0.1" class="w-full">
+                </div>
+                <div>
+                    <label for="font-size" class="block font-medium mb-1">Font Size</label>
+                    <input type="range" id="font-size" min="12" max="24" step="1" class="w-full">
+                </div>
+                 <div>
+                    <label for="contrast-theme" class="block font-medium mb-1">Contrast</label>
+                    <select id="contrast-theme" class="w-full p-2 bg-gray-100 rounded-lg">
+                        <option value="default">Default</option>
+                        <option value="high-contrast">High Contrast</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex justify-end mt-8 space-x-3">
+                <button onclick="closeSettingsModal()" class="px-5 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 font-semibold">Cancel</button>
+                <button onclick="saveAccessibilitySettings()" class="px-5 py-2 rounded-lg btn-primary font-semibold">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- STATE MANAGEMENT ---
+        let appState = {
+            userId: localStorage.getItem('allable-userId') || `user_${Date.now()}`,
+            profile: localStorage.getItem('allable-profile'),
+            settings: { lang: 'en-US', voiceSpeed: 1.0, voicePitch: 1.0, fontSize: 16, contrastTheme: 'default' },
+            reminders: JSON.parse(localStorage.getItem('allable-reminders')) || [],
+            activeFeature: null,
+            navigation: {
+                route: [
+                    { instruction: "Start by heading north on Main Street from Kalya Junction.", icon: "↑" },
+                    { instruction: "In 50 meters, turn right onto Temple Road.", icon: "→" },
+                    { instruction: "Continue for 100 meters. The post office will be on your left.", icon: "↑" },
+                    { instruction: "You have arrived at your destination.", icon: "★" }
+                ],
+                currentStep: 0
+            }
+        };
+        localStorage.setItem('allable-userId', appState.userId);
+
+        // --- MOCK DATA ---
+        const dashboards = {
+            'visually-impaired': { title: 'Visually Impaired Assistance', options: [ { name: 'Image-to-Speech', icon: '📷' }, { name: 'Navigation Aid', icon: '🧭' }, { name: 'Voice Assistant', icon: '🗣️' }, { name: 'Read Document', icon: '📄' } ] },
+            'deaf-non-speech': { title: 'Communication Hub', options: [ { name: 'Speech-to-Text', icon: '🎤' }, { name: 'Sign-to-Speech', icon: '🖐️' }, { name: 'Symbol Chatboard', icon: '📝' }, { name: 'Emergency Alert', icon: '🔔' } ] },
+            'elderly': { title: 'Senior Support', options: [ { name: 'Reminders', icon: '⏰' }, { name: 'Quick Calls', icon: '📞' }, { name: 'Voice News', icon: '📰' }, { name: 'Health Monitor', icon: '❤️' } ] },
+            'illiterate': { title: 'Literacy Aid', options: [ { name: 'Text Translator', icon: '🌐' }, { name: 'Text-to-Icon', icon: '🖼️' }, { name: 'Voice Commands', icon: '🎙️' }, { name: 'Volunteer Connect', icon: '🤝' } ] }
+        };
+
+        // --- SPEECH RECOGNITION SETUP ---
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition;
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript.trim().toLowerCase();
+                if (appState.activeFeature === 'Speech-to-Text') {
+                    document.getElementById('stt-output').textContent = transcript;
+                    updateIconDisplay(transcript);
+                } else if (appState.activeFeature === 'Voice Assistant') {
+                    handleVoiceAssistantCommand(transcript);
+                } else if (appState.activeFeature === 'Voice Commands') {
+                    handleDedicatedVoiceCommand(transcript);
+                }
+            };
+        }
+
+        // --- CORE APP FLOW ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const splashScreen = document.getElementById('splash-screen');
+            splashScreen.addEventListener('animationend', () => {
+                document.getElementById('app-container').style.opacity = '1';
+            }, { once: true });
+            
+            if (appState.profile) {
+                fetchAndApplyUserSettings();
+                loadDashboard(appState.profile);
+            } else {
+                switchPage('home-page');
+                speak("Welcome to ALLABLE. Please select a profile to continue.");
+            }
+        });
+
+        function switchPage(pageId) {
+            document.querySelectorAll('#app-container > section').forEach(section => {
+                section.classList.add('hidden'); section.classList.remove('flex');
+            });
+            const newPage = document.getElementById(pageId);
+            newPage.classList.remove('hidden'); newPage.classList.add('flex');
+        }
+
+        function selectProfile(profileType) {
+            appState.profile = profileType;
+            localStorage.setItem('allable-profile', profileType);
+            const isFirstTime = !localStorage.getItem(`allable-settings-${profileType}`);
+
+            if (isFirstTime && profileType !== 'deaf-non-speech') {
+                 switchPage('profile-setup-page');
+                 speak("Please choose your language preference.");
+            } else {
+                loadDashboard(profileType);
+            }
+        }
+        
+        async function saveSettings() {
+            const language = document.getElementById('language-select').value;
+            appState.settings.lang = language;
+            localStorage.setItem(`allable-settings-${appState.profile}`, JSON.stringify({ language }));
+            await saveAccessibilitySettings(false);
+            loadDashboard(appState.profile);
+        }
+
+        function loadDashboard(profileType) {
+            appState.activeFeature = null;
+            const dashboardData = dashboards[profileType];
+            if (!dashboardData) return;
+            document.getElementById('dashboard-title').innerText = dashboardData.title;
+            const contentDiv = document.getElementById('dashboard-content');
+            contentDiv.innerHTML = ''; 
+            dashboardData.options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = "card-bg p-4 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center text-center";
+                button.innerHTML = `<span class="text-5xl mb-3" role="img">${option.icon}</span><span class="text-lg font-semibold">${option.name}</span>`;
+                button.onclick = () => handleDashboardAction(option.name);
+                contentDiv.appendChild(button);
+            });
+            switchPage('dashboard-page');
+            speak(`Loading the ${dashboardData.title} dashboard.`);
+            fetchPredictiveShortcut();
+        }
+
+        function handleDashboardAction(actionName) {
+            logUsage(actionName);
+            speak(`Opening ${actionName}.`);
+            loadFeatureView(actionName);
+        }
+
+        // --- FEATURE VIEW LOADER (EXPANDED) ---
+        function loadFeatureView(featureName) {
+            appState.activeFeature = featureName;
+            const featureTitle = document.getElementById('feature-title');
+            const featureContent = document.getElementById('feature-content');
+            featureTitle.innerText = featureName;
+            featureContent.innerHTML = '';
+
+            switch (featureName) {
+                // VISUALLY IMPAIRED
+                case 'Image-to-Speech':
+                    featureContent.innerHTML = `<div class="text-center"><button onclick="simulateScan('image')" class="btn-primary font-bold py-4 px-8 rounded-lg mb-6 text-lg">Scan with Camera</button><div id="scan-result" class="card-bg p-6 rounded-lg min-h-[120px] text-xl"></div></div>`;
+                    break;
+                case 'Navigation Aid':
+                    featureContent.innerHTML = `<div class="text-center"><div id="nav-display" class="card-bg p-8 rounded-2xl mb-6 min-h-[150px] flex flex-col items-center justify-center"><p id="nav-icon" class="text-7xl mb-2"></p><p id="nav-instruction" class="text-2xl font-semibold"></p></div><button id="nav-button" onclick="handleNavigation()" class="btn-primary font-bold py-4 px-8 rounded-lg text-lg">Start Navigation</button></div>`;
+                    updateNavDisplay();
+                    break;
+                case 'Voice Assistant':
+                    featureContent.innerHTML = `<div class="text-center"><button onclick="startListening()" class="btn-primary font-bold py-4 px-8 rounded-lg mb-6 text-lg">Ask a Question</button><div class="card-bg p-6 rounded-lg"><p class="text-gray-600 mb-2">Your question:</p><p id="va-question" class="min-h-[30px] text-xl font-semibold"></p><hr class="my-4"><p class="text-gray-600 mb-2">ALLABLE's answer:</p><p id="va-answer" class="min-h-[60px] text-xl"></p></div></div>`;
+                    break;
+                case 'Read Document':
+                    featureContent.innerHTML = `<div class="text-center"><button onclick="simulateDocumentScan()" class="btn-primary font-bold py-4 px-8 rounded-lg mb-6 text-lg">Scan Document</button><div id="doc-text" class="card-bg p-6 rounded-lg min-h-[200px] text-left overflow-y-auto"></div></div>`;
+                    break;
+                
+                // DEAF & NON-SPEECH
+                case 'Speech-to-Text':
+                    featureContent.innerHTML = `<div class="text-center"><button onclick="startListening()" class="btn-primary font-bold py-4 px-8 rounded-lg mb-6 text-lg">Start Listening</button><div class="card-bg p-6 rounded-lg"><p id="stt-output" class="min-h-[60px] text-xl"></p><div id="icon-display" class="mt-4 text-5xl"></div></div></div>`;
+                    break;
+                case 'Sign-to-Speech':
+                    featureContent.innerHTML = `<div class="text-center"><div class="w-full h-64 bg-gray-800 rounded-lg mb-6 flex items-center justify-center text-white/50 text-2xl">Camera View</div><button onclick="simulateSignDetection()" class="btn-primary font-bold py-4 px-8 rounded-lg mb-4 text-lg">Start Signing</button><p id="sign-output" class="text-xl font-semibold min-h-[30px]"></p></div>`;
+                    break;
+                case 'Symbol Chatboard':
+                    featureContent.innerHTML = `<div id="symbol-grid" class="grid grid-cols-3 sm:grid-cols-4 gap-4"></div>`;
+                    loadSymbolChatboard();
+                    break;
+                case 'Emergency Alert':
+                    triggerEmergencyAlert();
+                    break;
+
+                // ELDERLY
+                case 'Reminders':
+                    featureContent.innerHTML = `<div class="card-bg p-6 rounded-lg mb-6"><input id="reminder-text" type="text" placeholder="e.g., Take medicine" class="w-full p-3 mb-3 bg-gray-100 rounded text-lg"><input id="reminder-time" type="time" class="w-full p-3 mb-3 bg-gray-100 rounded text-lg"><button onclick="addReminder()" class="w-full btn-primary font-bold py-3 rounded-lg text-lg">Set Reminder</button></div><div id="reminders-list" class="space-y-3"></div>`;
+                    displayReminders();
+                    break;
+                case 'Quick Calls':
+                    featureContent.innerHTML = `<div class="grid grid-cols-1 gap-6"><button onclick="simulateCall('Family')" class="card-bg p-8 rounded-2xl text-2xl font-semibold flex items-center justify-center"><span class="mr-4 text-4xl">👨‍👩‍👧</span>Family</button><button onclick="simulateCall('Doctor')" class="card-bg p-8 rounded-2xl text-2xl font-semibold flex items-center justify-center"><span class="mr-4 text-4xl">🧑‍⚕️</span>Doctor</button><button onclick="simulateCall('Emergency Services')" class="card-bg p-8 rounded-2xl text-2xl font-semibold flex items-center justify-center bg-red-100"><span class="mr-4 text-4xl">🚑</span>Emergency</button></div>`;
+                    break;
+                case 'Voice News':
+                    featureContent.innerHTML = `<div id="news-container" class="space-y-4"></div>`;
+                    fetchNews();
+                    break;
+                case 'Health Monitor':
+                    featureContent.innerHTML = `<div class="space-y-6"><div class="grid grid-cols-2 gap-6 text-center"><div class="card-bg p-6 rounded-xl"><p class="text-lg text-gray-600">Heart Rate</p><p id="health-hr" class="text-5xl font-bold">--</p><p>BPM</p></div><div class="card-bg p-6 rounded-xl"><p class="text-lg text-gray-600">Blood Pressure</p><p id="health-bp" class="text-5xl font-bold">--/--</p><p>mmHg</p></div></div><button onclick="measureVitals()" class="w-full btn-primary font-bold py-4 rounded-lg text-lg">Measure Vitals</button></div>`;
+                    measureVitals();
+                    break;
+                
+                // ILLITERATE
+                case 'Text Translator':
+                     featureContent.innerHTML = `<div class="text-center"><button onclick="simulateScan('translate')" class="btn-primary font-bold py-4 px-8 rounded-lg mb-6 text-lg">Scan Text</button><div id="scan-result" class="card-bg p-6 rounded-lg min-h-[120px] text-left text-xl"></div></div>`;
+                    break;
+                case 'Text-to-Icon':
+                    featureContent.innerHTML = `<div><textarea id="tti-input" class="w-full h-32 p-3 bg-gray-100 rounded-lg text-lg" placeholder="Enter text here..."></textarea><button onclick="convertTextToIcons()" class="w-full btn-primary font-bold py-3 rounded-lg text-lg mt-4">Convert to Icons</button><div id="tti-output" class="card-bg p-6 rounded-lg mt-6 min-h-[80px] text-5xl"></div></div>`;
+                    break;
+                case 'Voice Commands':
+                    featureContent.innerHTML = `<div class="text-center"><div class="card-bg p-6 rounded-lg mb-6"><h3 class="text-xl font-semibold mb-3">Try saying...</h3><p class="text-lg">"Find hospital"</p><p class="text-lg">"Call family"</p><p class="text-lg">"Read the news"</p></div><button onclick="startListening()" class="btn-primary font-bold py-4 px-8 rounded-lg text-lg">Start Listening</button><p id="vc-status" class="mt-4 text-lg min-h-[30px]"></p></div>`;
+                    speak("Say a command to control the app.");
+                    break;
+                case 'Volunteer Connect':
+                    featureContent.innerHTML = `<div class="text-center"><img src="https://placehold.co/600x300/e0f2f1/1a3a3a?text=Map+of+Kalya" alt="Map of Kalya" class="w-full h-48 object-cover rounded-lg mb-6"><div id="volunteer-list" class="space-y-4 text-left"></div></div>`;
+                    loadVolunteers();
+                    break;
+                
+                default:
+                    featureContent.innerHTML = `<p class="text-center text-gray-600 text-lg">This feature is coming soon.</p>`;
+            }
+            switchPage('feature-view-page');
+        }
+        
+        // --- AI & FEATURE IMPLEMENTATIONS ---
+        function simulateScan(type) {
+            const resultDiv = document.getElementById('scan-result');
+            resultDiv.innerText = 'Processing...';
+            speak("Scanning, please wait.");
+            setTimeout(() => {
+                let textResult = '';
+                if (type === 'image') {
+                    textResult = 'A person is standing in front of a table. There is a door to the right.';
+                    resultDiv.innerText = textResult;
+                } else if (type === 'translate') {
+                    const original = "Pharmacy";
+                    const translated = "ಔಷಧಾಲಯ";
+                    resultDiv.innerHTML = `<p class="mb-2"><strong>Original:</strong> ${original}</p><p><strong>Translated:</strong> ${translated}</p>`;
+                    textResult = `Translation: ${translated}`;
+                }
+                speak(textResult);
+            }, 2500);
+        }
+
+        function startListening() {
+            if (recognition) { speak("Listening now."); recognition.lang = appState.settings.lang; recognition.start(); } 
+            else { speak("Sorry, speech recognition is not available on this device."); }
+        }
+        
+        function updateIconDisplay(text) {
+            const iconMap = { 'school': '🏫', 'time': '⏰', 'water': '💧', 'food': '🍔', 'help': '🆘', 'hospital': '🏥', 'medicine': '💊', 'family': '👨‍👩‍👧', 'doctor': '🧑‍⚕️', 'call': '📞', 'news': '📰' };
+            const words = text.toLowerCase().split(' '); let icons = ''; let spokenWords = [];
+            words.forEach(word => { 
+                const cleanWord = word.replace(/[.,!?]/g, ''); // Remove punctuation
+                if (iconMap[cleanWord]) { 
+                    icons += iconMap[cleanWord] + ' '; 
+                    if (!spokenWords.includes(cleanWord)) spokenWords.push(cleanWord);
+                }
+            });
+            if (appState.activeFeature === 'Speech-to-Text') {
+                 document.getElementById('icon-display').innerText = icons;
+            } else if (appState.activeFeature === 'Text-to-Icon') {
+                document.getElementById('tti-output').innerText = icons;
+                if(spokenWords.length > 0) speak(`Found icons for: ${spokenWords.join(', ')}`);
+            }
+        }
+
+        function addReminder() {
+            const text = document.getElementById('reminder-text').value;
+            const time = document.getElementById('reminder-time').value;
+            if (text && time) {
+                appState.reminders.push({ text, time, id: Date.now() });
+                localStorage.setItem('allable-reminders', JSON.stringify(appState.reminders));
+                displayReminders(); speak(`Reminder set for ${text} at ${time}.`);
+                document.getElementById('reminder-text').value = ''; document.getElementById('reminder-time').value = '';
+            } else { speak("Please enter both a reminder and a time."); }
+        }
+
+        function displayReminders() {
+            const listDiv = document.getElementById('reminders-list');
+            listDiv.innerHTML = '';
+            appState.reminders.sort((a,b) => a.time.localeCompare(b.time)).forEach(reminder => {
+                const reminderEl = document.createElement('div');
+                reminderEl.className = 'card-bg p-4 rounded-lg flex justify-between items-center';
+                reminderEl.innerHTML = `<span><strong class="text-lg">${reminder.time}</strong> - ${reminder.text}</span>`;
+                listDiv.appendChild(reminderEl);
+            });
+        }
+        
+        function simulateCall(contact) { speak(`Calling ${contact}.`); }
+
+        async function fetchNews() {
+            const newsContainer = document.getElementById('news-container');
+            newsContainer.innerHTML = '<p>Fetching news...</p>';
+            const apiKey = 'YOUR_NEWS_API_KEY';
+            const url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=${apiKey}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data.status !== 'ok') { throw new Error(data.message); }
+                newsContainer.innerHTML = '';
+                speak("Here are the latest headlines.");
+                data.articles.slice(0, 5).forEach(article => {
+                    const articleEl = document.createElement('div');
+                    articleEl.className = 'card-bg p-4 rounded-lg cursor-pointer hover:bg-white/90';
+                    articleEl.innerHTML = `<h3 class="font-semibold text-lg">${article.title}</h3><p class="text-sm text-gray-600">${article.source.name}</p>`;
+                    articleEl.onclick = () => speak(article.title);
+                    newsContainer.appendChild(articleEl);
+                });
+            } catch (error) {
+                newsContainer.innerHTML = `<p>Could not fetch news. Please check your API key.</p>`;
+                console.error("News Fetch Error:", error);
+            }
+        }
+
+        function measureVitals() {
+            speak("Measuring your vitals.");
+            document.getElementById('health-hr').innerText = '...';
+            document.getElementById('health-bp').innerText = '...';
+            setTimeout(() => {
+                const heartRate = Math.floor(Math.random() * (85 - 65 + 1)) + 65;
+                const sys = Math.floor(Math.random() * (130 - 110 + 1)) + 110;
+                const dia = Math.floor(Math.random() * (85 - 75 + 1)) + 75;
+                document.getElementById('health-hr').innerText = heartRate;
+                document.getElementById('health-bp').innerText = `${sys}/${dia}`;
+                speak(`Your heart rate is ${heartRate} beats per minute. Blood pressure is ${sys} over ${dia}.`);
+            }, 2000);
+        }
+
+        function updateNavDisplay() {
+            const step = appState.navigation.route[appState.navigation.currentStep];
+            document.getElementById('nav-icon').innerText = step.icon;
+            document.getElementById('nav-instruction').innerText = step.instruction;
+            speak(step.instruction);
+        }
+
+        function handleNavigation() {
+            const navButton = document.getElementById('nav-button');
+            appState.navigation.currentStep++;
+            if (appState.navigation.currentStep < appState.navigation.route.length) {
+                updateNavDisplay();
+                navButton.innerText = "Next Step";
+            } else {
+                navButton.innerText = "Restart Navigation";
+                appState.navigation.currentStep = -1;
+            }
+        }
+        
+        function handleVoiceAssistantCommand(command) {
+            document.getElementById('va-question').innerText = `"${command}"`;
+            let answer = "I'm not sure how to answer that. Please try again.";
+            if (command.includes("time")) {
+                const now = new Date();
+                answer = `The current time is ${now.toLocaleTimeString('en-IN', { hour: '2-digit', minute:'2-digit' })}`;
+            } else if (command.includes("weather")) {
+                answer = "The weather in Kalya, Karnataka is currently clear and sunny, with a temperature of 28 degrees Celsius.";
+            } else if (command.includes("joke")) {
+                answer = "Why don't scientists trust atoms? Because they make up everything!";
+            }
+            document.getElementById('va-answer').innerText = answer;
+            speak(answer);
+        }
+        
+        function simulateDocumentScan() {
+            const docContainer = document.getElementById('doc-text');
+            const docText = "Notice of Public Meeting. The Kalya Village Council will hold a public meeting on Tuesday, September 30, 2025, at 6:00 PM at the Community Hall. The agenda includes discussion of the new water purification system and road maintenance schedules for the upcoming season. All residents are encouraged to attend and provide their input. For more information, please contact the council office during business hours.";
+            docContainer.innerText = docText;
+            speak("Document scan complete. Reading now.");
+            setTimeout(() => speak(docText, { cancelPrev: false }), 1500);
+        }
+
+        function simulateSignDetection() {
+            const output = document.getElementById('sign-output');
+            output.innerText = 'Detecting...';
+            setTimeout(() => {
+                const detectedSign = "Water";
+                output.innerText = `Detected: ${detectedSign}`;
+                speak(detectedSign);
+            }, 2000);
+        }
+
+        function loadSymbolChatboard() {
+            const grid = document.getElementById('symbol-grid');
+            const symbols = [
+                { symbol: '💧', word: 'Water' }, { symbol: '🍔', word: 'Food' },
+                { symbol: '🏠', word: 'Home' }, { symbol: '🚽', word: 'Restroom' },
+                { symbol: '✅', word: 'Yes' }, { symbol: '❌', word: 'No' },
+                { symbol: '❤️', word: 'Thank you' }, { symbol: '🆘', word: 'Help' },
+            ];
+            grid.innerHTML = '';
+            symbols.forEach(({ symbol, word }) => {
+                const button = document.createElement('button');
+                button.className = 'card-bg p-4 rounded-2xl text-center transform hover:scale-105 transition-transform';
+                button.innerHTML = `<p class="text-6xl">${symbol}</p><p class="font-semibold mt-2">${word}</p>`;
+                button.onclick = () => speak(word);
+                grid.appendChild(button);
+            });
+        }
+
+        function triggerEmergencyAlert() {
+            const featureContent = document.getElementById('feature-content');
+            featureContent.innerHTML = `
+                <div class="text-center flex flex-col items-center justify-center h-full">
+                    <p class="text-8xl mb-4">✅</p>
+                    <h3 class="text-4xl font-bold text-red-600">Alert Sent</h3>
+                    <p class="text-lg mt-2 text-gray-700">Your location and profile have been shared with your emergency contacts.</p>
+                </div>
+            `;
+            activateSOS(false);
+            if ('vibrate' in navigator) {
+                navigator.vibrate([200, 100, 200, 100, 500]);
+            }
+        }
+
+        // --- NEW ILLITERATE FEATURES ---
+        function convertTextToIcons() {
+            const text = document.getElementById('tti-input').value;
+            updateIconDisplay(text);
+        }
+
+        function handleDedicatedVoiceCommand(command) {
+            const status = document.getElementById('vc-status');
+            status.innerText = `Recognized: "${command}"`;
+            let actionTaken = false;
+            if (command.includes('hospital')) {
+                speak("Showing directions to the nearest hospital."); actionTaken = true;
+            } else if (command.includes('call') && command.includes('family')) {
+                simulateCall('Family'); actionTaken = true;
+            } else if (command.includes('news')) {
+                loadFeatureView('Voice News'); actionTaken = true;
+            }
+            if (!actionTaken) { speak("Sorry, I didn't recognize that command."); }
+        }
+
+        function loadVolunteers() {
+            const list = document.getElementById('volunteer-list');
+            const volunteers = [
+                { name: 'Priya S.', distance: '50m away' },
+                { name: 'Anil Kumar', distance: '120m away' },
+                { name: 'Sunita G.', distance: '200m away' },
+            ];
+            list.innerHTML = '';
+            speak("Finding nearby volunteers.");
+            volunteers.forEach(v => {
+                const item = document.createElement('div');
+                item.className = 'card-bg p-4 rounded-lg flex justify-between items-center';
+                item.innerHTML = `<div><p class="font-bold text-lg">${v.name}</p><p class="text-sm text-gray-600">${v.distance}</p></div><button onclick="connectWithVolunteer('${v.name}')" class="btn-accent px-4 py-2 rounded-lg font-semibold">Connect</button>`;
+                list.appendChild(item);
+            });
+        }
+
+        function connectWithVolunteer(name) {
+            speak(`Connecting you with ${name}. They have been notified and are on their way.`);
+        }
+
+
+        function showHomePage() {
+            localStorage.removeItem('allable-profile');
+            appState.profile = null; switchPage('home-page'); speak("Returning to the home screen.");
+        }
+
+        function speak(text, options = {}) {
+            const { cancelPrev = true, rate = appState.settings.voiceSpeed, pitch = appState.settings.voicePitch } = options;
+            if ('speechSynthesis' in window) {
+                if(cancelPrev) speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = appState.settings.lang;
+                utterance.rate = parseFloat(rate); utterance.pitch = parseFloat(pitch);
+                speechSynthesis.speak(utterance);
+            }
+        }
+        
+        async function fetchPredictiveShortcut() {
+            try {
+                const response = await fetch(`/api/predictive-shortcut/${appState.userId}`); if (!response.ok) return;
+                const data = await response.json();
+                const btn = document.getElementById('predictive-shortcut-btn');
+                btn.innerText = `Go to ${data.predicted_feature}`;
+                btn.onclick = () => handleDashboardAction(data.predicted_feature);
+                document.getElementById('predictive-shortcut-container').classList.remove('hidden');
+            } catch (error) { console.warn('Could not fetch predictive shortcut:', error); }
+        }
+        
+        async function logUsage(feature, trigger = 'tap', command = null) {
+            fetch('/api/log-usage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: appState.userId, featureUsed: feature, triggerMethod: trigger, rawVoiceCommand: command }), });
+        }
+        
+        function activateSOS(withSpeak = true) {
+             if(withSpeak) speak("SOS activated. Sharing your location with emergency contacts.");
+             if ('geolocation' in navigator) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const { latitude, longitude } = position.coords;
+                    fetch('/api/sos', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: appState.userId, latitude, longitude }), });
+                }, () => { if(withSpeak) speak("Could not get your location. Please enable location services."); });
+            }
+        }
+        
+        function openSettingsModal() {
+            document.getElementById('voice-speed').value = appState.settings.voiceSpeed;
+            document.getElementById('voice-pitch').value = appState.settings.voicePitch;
+            document.getElementById('font-size').value = appState.settings.fontSize;
+            document.getElementById('contrast-theme').value = appState.settings.contrastTheme;
+            document.getElementById('settings-modal').classList.remove('hidden');
+        }
+
+        function closeSettingsModal() { document.getElementById('settings-modal').classList.add('hidden'); }
+
+        async function saveAccessibilitySettings(showAlert = true) {
+            appState.settings.voiceSpeed = document.getElementById('voice-speed').value;
+            appState.settings.voicePitch = document.getElementById('voice-pitch').value;
+            appState.settings.fontSize = document.getElementById('font-size').value;
+            appState.settings.contrastTheme = document.getElementById('contrast-theme').value;
+            applyAccessibilitySettings();
+            await fetch('/api/user-preferences', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: appState.userId, profileType: appState.profile, language: appState.settings.lang, ...appState.settings }) });
+            if (showAlert) speak("Settings saved.");
+            closeSettingsModal();
+        }
+
+        function applyAccessibilitySettings() {
+            const root = document.documentElement;
+            root.style.setProperty('--font-size', `${appState.settings.fontSize}px`);
+            root.classList.toggle('high-contrast', appState.settings.contrastTheme === 'high-contrast');
+        }
+
+        async function fetchAndApplyUserSettings() {
+             try {
+                const response = await fetch(`/api/user-preferences/${appState.userId}`); if (!response.ok) return;
+                const data = await response.json();
+                appState.settings.lang = data.language || appState.settings.lang;
+                appState.settings.voiceSpeed = data.voice_speed || appState.settings.voiceSpeed;
+                appState.settings.voicePitch = data.voice_pitch || appState.settings.voicePitch;
+                appState.settings.fontSize = data.font_size || appState.settings.fontSize;
+                appState.settings.contrastTheme = data.contrast_theme || appState.settings.contrastTheme;
+                applyAccessibilitySettings();
+            } catch (error) { console.warn('Could not fetch user settings:', error); }
+        }
+    </script>
+</body>
+</html>
+
