@@ -18,13 +18,15 @@ const pool = new pg.Pool(dbConfig);
 
 // --- MIDDLEWARE ---
 app.use(express.json()); 
+
+// Serve static files from the 'public' folder
 app.use(express.static(path.join(__dirname, 'public')));
 
 // --- API ROUTES ---
 
 // Serve the main application page
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // GET user preferences
@@ -45,7 +47,6 @@ app.get('/api/user/:userId/preferences', async (req, res) => {
 
 // POST or UPDATE user preferences
 app.post('/api/user/preferences', async (req, res) => {
-    // Output preference is removed, only language is needed.
     const { userId, profileType, language } = req.body;
 
     if (!userId || !profileType || !language) {
@@ -53,7 +54,6 @@ app.post('/api/user/preferences', async (req, res) => {
     }
 
     try {
-        // UPSERT logic: Insert or update if conflict on user_id
         const query = `
             INSERT INTO user_preferences (user_id, profile_type, language, last_updated)
             VALUES ($1, $2, $3, NOW())
@@ -71,14 +71,9 @@ app.post('/api/user/preferences', async (req, res) => {
     }
 });
 
-
 // --- MOCK AI/ML ENDPOINTS ---
-// These endpoints simulate the behavior of the AI models.
-// In a real application, these would make calls to Python services (Flask/FastAPI).
 
-// Image-to-Speech endpoint
 app.post('/api/ml/image-to-speech', (req, res) => {
-    console.log('Received image-to-speech request.');
     const MOCK_DESCRIPTIONS = [
         "A person is walking towards a wooden door.",
         "A red apple is on a white table.",
@@ -89,29 +84,24 @@ app.post('/api/ml/image-to-speech', (req, res) => {
     res.json({ description });
 });
 
-// Sign-to-Speech endpoint
 app.post('/api/ml/sign-to-speech', (req, res) => {
-    console.log('Received sign-to-speech request.');
     const MOCK_PHRASES = ["Hello", "Thank you", "Water, please", "Where is the restroom?"];
     const phrase = MOCK_PHRASES[Math.floor(Math.random() * MOCK_PHRASES.length)];
     res.json({ spokenText: phrase });
 });
 
-// Speech-to-Text endpoint
 app.post('/api/ml/speech-to-text', (req, res) => {
     const { audioData } = req.body; 
-    console.log('Received speech-to-text request.');
-    if (!audioData) {
-        return res.status(400).json({error: "No audio data received."});
-    }
+    if (!audioData) return res.status(400).json({ error: "No audio data received." });
+    
     const MOCK_TRANSCRIPTS = ["The meeting is at 2 PM.", "Let's go to the park.", "What is the weather like today?"];
     const transcript = MOCK_TRANSCRIPTS[Math.floor(Math.random() * MOCK_TRANSCRIPTS.length)];
     res.json({ transcript, icons: ['📅', '⏰'] });
 });
 
-
 // --- SERVER INITIALIZATION ---
 app.listen(port, () => {
     console.log(`ALLABLE server running at http://localhost:${port}`);
 });
+
 
